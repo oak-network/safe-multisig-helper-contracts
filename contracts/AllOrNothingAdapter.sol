@@ -1,33 +1,54 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import {BaseAdminAdapter} from "./base/BaseAdminAdapter.sol";
-import {IAllOrNothing} from "./interfaces/IAllOrNothing.sol";
 
-contract AllOrNothingAdapter is BaseAdminAdapter {
-    constructor(address _admin) BaseAdminAdapter(_admin) {}
-
-    function cancelTreasury(
+abstract contract AllOrNothingAdapter is BaseAdminAdapter {
+    function aonCancelTreasury(
         address treasury,
         bytes32 message
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IAllOrNothing(treasury).cancelTreasury(message);
+
+        bytes memory data = abi.encodeWithSignature(
+            "cancelTreasury(bytes32)",
+            message
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
-    function pauseTreasury(
+    function aonPauseTreasury(
         address treasury,
         bytes32 message
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IAllOrNothing(treasury).pauseTreasury(message);
+
+        bytes memory data = abi.encodeWithSignature(
+            "pauseTreasury(bytes32)",
+            message
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
-    function unpauseTreasury(
+    function aonUnpauseTreasury(
         address treasury,
         bytes32 message
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IAllOrNothing(treasury).unpauseTreasury(message);
+
+        bytes memory data = abi.encodeWithSignature(
+            "unpauseTreasury(bytes32)",
+            message
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 }

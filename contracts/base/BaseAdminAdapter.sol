@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 /**
  * @title BaseAdminAdapter
@@ -20,7 +20,6 @@ abstract contract BaseAdminAdapter {
     }
 
     constructor(address _admin) {
-        if (_admin == address(0)) revert ZeroAddress();
         admin = _admin;
     }
 
@@ -36,7 +35,11 @@ abstract contract BaseAdminAdapter {
         bytes calldata data
     ) external onlyAdmin returns (bool success, bytes memory returnData) {
         if (target == address(0)) revert ZeroAddress();
-        (success, returnData) = target.call(data);
+
+        // Append msg.sender for meta-transaction support
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (success, returnData) = target.call(dataWithSender);
         if (!success) revert CallFailed();
     }
 }

@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import {BaseAdminAdapter} from "./base/BaseAdminAdapter.sol";
-import {IPaymentTreasury} from "./interfaces/IPaymentTreasury.sol";
 
-contract PaymentTreasuryAdapter is BaseAdminAdapter {
-    constructor(address _admin) BaseAdminAdapter(_admin) {}
-
+abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     function createPayment(
         address treasury,
         bytes32 paymentId,
@@ -16,13 +13,19 @@ contract PaymentTreasuryAdapter is BaseAdminAdapter {
         uint256 expiration
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).createPayment(
+
+        bytes memory data = abi.encodeWithSignature(
+            "createPayment(bytes32,bytes32,bytes32,uint256,uint256)",
             paymentId,
             buyerId,
             itemId,
             amount,
             expiration
         );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
     function cancelPayment(
@@ -30,7 +33,15 @@ contract PaymentTreasuryAdapter is BaseAdminAdapter {
         bytes32 paymentId
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).cancelPayment(paymentId);
+
+        bytes memory data = abi.encodeWithSignature(
+            "cancelPayment(bytes32)",
+            paymentId
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
     function confirmPayment(
@@ -38,7 +49,15 @@ contract PaymentTreasuryAdapter is BaseAdminAdapter {
         bytes32 paymentId
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).confirmPayment(paymentId);
+
+        bytes memory data = abi.encodeWithSignature(
+            "confirmPayment(bytes32)",
+            paymentId
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
     function confirmPaymentBatch(
@@ -46,7 +65,15 @@ contract PaymentTreasuryAdapter is BaseAdminAdapter {
         bytes32[] calldata paymentIds
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).confirmPaymentBatch(paymentIds);
+
+        bytes memory data = abi.encodeWithSignature(
+            "confirmPaymentBatch(bytes32[])",
+            paymentIds
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
     function claimRefund(
@@ -55,40 +82,79 @@ contract PaymentTreasuryAdapter is BaseAdminAdapter {
         address refundAddress
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).claimRefund(
+
+        bytes memory data = abi.encodeWithSignature(
+            "claimRefund(bytes32,address)",
             paymentId,
             refundAddress
         );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
-function claimRefund(
+
+    function claimRefund(
         address treasury,
         bytes32 paymentId
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).claimRefund(paymentId);
+
+        bytes memory data = abi.encodeWithSignature(
+            "claimRefund(bytes32)",
+            paymentId
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
-    function cancelTreasury(
+    function ptCancelTreasury(
         address treasury,
         bytes32 message
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).cancelTreasury(message);
+
+        bytes memory data = abi.encodeWithSignature(
+            "cancelTreasury(bytes32)",
+            message
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
-    function pauseTreasury(
+    function ptPauseTreasury(
         address treasury,
         bytes32 message
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).pauseTreasury(message);
+
+        bytes memory data = abi.encodeWithSignature(
+            "pauseTreasury(bytes32)",
+            message
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 
-    function unpauseTreasury(
+    function ptUnpauseTreasury(
         address treasury,
         bytes32 message
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
-        IPaymentTreasury(treasury).unpauseTreasury(message);
+
+        bytes memory data = abi.encodeWithSignature(
+            "unpauseTreasury(bytes32)",
+            message
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
     }
 }

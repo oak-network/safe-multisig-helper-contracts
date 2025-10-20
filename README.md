@@ -101,6 +101,8 @@ npm run compile
 # 1. Install dependencies
 npm install
 ```
+
+### 3. Set env
 ```bash
 1. npx hardhat vars set PRIVATE_KEY
 2. npx hardhat vars set SAFE_ADMIN

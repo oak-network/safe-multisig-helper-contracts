@@ -1,11 +1,17 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-const { vars } = require("hardhat/config");
 
-const safeMultisigAdapterModule = buildModule("LockModule", (m) => {
-    const SAFE_ADMIN_ADDRESS = vars.get("SAFE_ADMIN")
-    const safeMultisigAdapter = m.contract("SafeMultisigAdapter", [SAFE_ADMIN_ADDRESS]);
+const DeployModule = buildModule("DeployAdapterManager", (m) => {
+  // Get admin address parameter or use deployer account as default
+  const admin = m.getParameter("SAFE_ADMIN", m.getAccount(0));
+  // Deploy AdapterManager directly with constructor
+  const adapterManager = m.contract("AdapterManager", [admin], {
+    id: "AdapterManager",
+  });
 
-    return { safeMultisigAdapter };
+  return { 
+    adapterManager 
+  };
 });
 
-export default safeMultisigAdapterModule;
+export default DeployModule;
+

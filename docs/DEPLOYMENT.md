@@ -6,17 +6,24 @@ This guide covers deploying the `AdapterManager` contract to Celo networks using
 
 ## Prerequisites
 
-1. **Environment Setup**
-   ```bash
-   # Create .env file with your private key
-   PRIVATE_KEY=your_private_key_without_0x_prefix
-   CELOSCAN_API_KEY=your_celoscan_api_key
-   ```
-
-2. **Install Dependencies**
+1. **Install Dependencies**
    ```bash
    npm install
    ```
+
+2. **Set Configuration Variables**
+   ```bash
+   # Set your private key
+   npx hardhat vars set PRIVATE_KEY
+   
+   # Set Safe multisig admin address (optional, defaults to deployer)
+   npx hardhat vars set SAFE_ADMIN
+   
+   # Set Celoscan API key for contract verification
+   npx hardhat vars set CELOSCAN_API_KEY
+   ```
+   
+   For more info: [Hardhat Configuration Variables](https://hardhat.org/hardhat-runner/docs/guides/configuration-variables)
 
 3. **Compile Contracts**
    ```bash
@@ -27,49 +34,23 @@ This guide covers deploying the `AdapterManager` contract to Celo networks using
 
 ### Option 1: Deploy to Testnet (Alfajores)
 
-**Using deployer as admin:**
 ```bash
-npx hardhat ignition deploy ignition/modules/deploy.ts --network alfajores
-```
-
-**Using Safe multisig as admin:**
-```bash
-npx hardhat ignition deploy ignition/modules/deploy.ts \
-  --network alfajores \
-  --parameters '{"DeployAdapterManager":{"adminAddress":"0xYourSafeMultisigAddress"}}'
+npm run deploy:alfajores
 ```
 
 ### Option 2: Deploy to Mainnet (Celo)
 
-**Using deployer as admin:**
 ```bash
-npx hardhat ignition deploy ignition/modules/deploy.ts --network celo
+npm run deploy:celo
 ```
 
-**Using Safe multisig as admin:**
+### Option 3: Deploy to Mainnet (Celo)
 ```bash
 npx hardhat ignition deploy ignition/modules/deploy.ts \
   --network celo \
   --parameters '{"DeployAdapterManager":{"adminAddress":"0xYourSafeMultisigAddress"}}'
 ```
 
-### Option 3: Using Parameters File
-
-1. **Edit `ignition/parameters.json`:**
-   ```json
-   {
-     "DeployAdapterManager": {
-       "adminAddress": "0xYourSafeMultisigAddress"
-     }
-   }
-   ```
-
-2. **Deploy:**
-   ```bash
-   npx hardhat ignition deploy ignition/modules/deploy.ts \
-     --network alfajores \
-     --parameters ignition/parameters.json
-   ```
 
 ## Deployment Process
 
@@ -207,7 +188,7 @@ await manager.aonPauseTreasury(mockTreasuryAddress, message);
 ### Pre-Deployment
 - [ ] Contracts compiled successfully
 - [ ] All tests passing (`npm test`)
-- [ ] Private key in `.env` file
+- [ ] Configuration variables set (`PRIVATE_KEY`, `SAFE_ADMIN`, `CELOSCAN_API_KEY`)
 - [ ] Sufficient balance for gas fees
 - [ ] Admin address determined (deployer or Safe multisig)
 - [ ] Network selected (alfajores or celo)
@@ -273,76 +254,4 @@ Approximate gas costs (at 1 gwei):
 | Celo | ~2.5M | ~0.0025 |
 
 *Actual costs may vary based on network conditions*
-
-## Security Best Practices
-
-1. **Use Safe Multisig for Production**
-   - Deploy with Safe as admin, not EOA
-   - Or transfer admin to Safe immediately after deployment
-
-2. **Verify Contracts**
-   - Always verify on Celoscan
-   - Allows users to read source code
-   - Enables Safe UI integration
-
-3. **Test on Testnet First**
-   - Deploy to Alfajores first
-   - Test all functions
-   - Verify meta-transactions work
-   - Only then deploy to mainnet
-
-4. **Backup Deployment Info**
-   - Save deployment addresses
-   - Keep deployment artifacts
-   - Document admin address
-
-## Example Deployment Flow
-
-```bash
-# 1. Compile
-npm run compile
-
-# 2. Run tests
-npm test
-
-# 3. Deploy to testnet
-npx hardhat ignition deploy ignition/modules/deploy.ts --network alfajores
-
-# 4. Save the address
-# From: ignition/deployments/chain-44787/deployed_addresses.json
-
-# 5. Verify on Celoscan
-npx hardhat verify --network alfajores <ADDRESS> "<ADMIN>"
-
-# 6. Test the deployment
-npx hardhat console --network alfajores
-> const manager = await ethers.getContractAt("AdapterManager", "<ADDRESS>");
-> await manager.admin();
-
-# 7. If successful, deploy to mainnet
-npx hardhat ignition deploy ignition/modules/deploy.ts --network celo
-```
-
-## NPM Scripts
-
-Quick commands from `package.json`:
-
-```bash
-# Deploy to Alfajores
-npm run deploy:alfajores
-
-# Deploy to Celo Mainnet
-npm run deploy:celo
-```
-
-## Support
-
-For issues or questions:
-1. Check [Hardhat Ignition Docs](https://hardhat.org/ignition)
-2. Review [Celo Documentation](https://docs.celo.org)
-3. Check deployment logs in `ignition/deployments/`
-
----
-
-**Ready to deploy?** Start with Alfajores testnet, then move to mainnet!
 

@@ -145,7 +145,6 @@ npx hardhat ignition deploy ignition/modules/deploy.ts \
 |----------|-------------|
 | **[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)** | Comprehensive deployment guide with examples, verification, and troubleshooting |
 | **[docs/META_TRANSACTIONS.md](./docs/META_TRANSACTIONS.md)** | Complete guide to the meta-transaction pattern implementation |
-| **[docs/META_TRANSACTIONS_SUMMARY.md](./docs/META_TRANSACTIONS_SUMMARY.md)** | Quick reference for meta-transaction setup |
 
 ### 🚀 Deployment & Testing
 
@@ -291,11 +290,10 @@ safe-multisig-helper-contracts/
 │   ├── modules/
 │   │   └── deploy.ts                   # Deployment module
 │   ├── parameters.json                 # Deployment parameters
-│   └── README.md                       # Deployment guide
+│  
 ├── docs/
 │   ├── DEPLOYMENT.md                   # Deployment documentation
 │   ├── META_TRANSACTIONS.md            # Meta-transaction guide
-│   └── META_TRANSACTIONS_SUMMARY.md    # Quick reference
 ├── hardhat.config.ts                   # Hardhat configuration
 └── package.json                        # Dependencies and scripts
 ```

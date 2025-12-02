@@ -26,3 +26,11 @@ interface IPaymentTreasury {
 
     function unpauseTreasury(bytes32 message) external;
 }
+
+interface IPaymentTreasuryClaimRefundWithAddress {
+    function claimRefund(bytes32 paymentId, address refundAddress) external;
+}
+
+interface IPaymentTreasuryClaimRefundSingle {
+    function claimRefund(bytes32 paymentId) external;
+}

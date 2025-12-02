@@ -2,6 +2,7 @@
 pragma solidity ^0.8.22;
 
 import {BaseAdminAdapter} from "./base/BaseAdminAdapter.sol";
+import {IAllOrNothing} from "./interfaces/IAllOrNothing.sol";
 
 abstract contract AllOrNothingAdapter is BaseAdminAdapter {
     function aonCancelTreasury(
@@ -10,9 +11,9 @@ abstract contract AllOrNothingAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "cancelTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IAllOrNothing.cancelTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -26,9 +27,9 @@ abstract contract AllOrNothingAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "pauseTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IAllOrNothing.pauseTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -42,9 +43,9 @@ abstract contract AllOrNothingAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "unpauseTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IAllOrNothing.unpauseTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 

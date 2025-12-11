@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
+import {ICampaignPaymentTreasury} from "../interfaces/ICampaignPaymentTreasury.sol";
+
 /**
  * @title MockTreasury
  * @notice Mock contract for testing adapter functions with meta-transaction support
@@ -183,8 +185,11 @@ contract MockPaymentTreasury {
         bytes32 paymentId,
         bytes32 buyerId,
         bytes32,
+        address,
         uint256,
-        uint256
+        uint256,
+        ICampaignPaymentTreasury.LineItem[] calldata,
+        ICampaignPaymentTreasury.ExternalFees[] calldata
     ) external {
         emit PaymentCreated(paymentId, buyerId, _msgSender());
     }
@@ -193,11 +198,14 @@ contract MockPaymentTreasury {
         emit PaymentCancelled(paymentId, _msgSender());
     }
 
-    function confirmPayment(bytes32 paymentId) external {
+    function confirmPayment(bytes32 paymentId, address) external {
         emit PaymentConfirmed(paymentId, _msgSender());
     }
 
-    function confirmPaymentBatch(bytes32[] calldata paymentIds) external {
+    function confirmPaymentBatch(
+        bytes32[] calldata paymentIds,
+        address[] calldata
+    ) external {
         emit PaymentBatchConfirmed(paymentIds.length, _msgSender());
     }
 

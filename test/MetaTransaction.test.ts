@@ -66,8 +66,21 @@ describe("Meta-Transaction Pattern", function () {
       const paymentId = ethers.encodeBytes32String("payment1");
       const buyerId = ethers.encodeBytes32String("buyer1");
       const itemId = ethers.encodeBytes32String("item1");
+      const paymentToken = admin.address;
       const amount = ethers.parseEther("1");
       const expiration = Math.floor(Date.now() / 1000) + 3600;
+      const lineItems = [
+        {
+          typeId: ethers.encodeBytes32String("line1"),
+          amount: ethers.parseEther("0.5"),
+        },
+      ];
+      const externalFees = [
+        {
+          feeType: ethers.encodeBytes32String("fee1"),
+          feeAmount: ethers.parseEther("0.1"),
+        },
+      ];
 
       await expect(
         adapterManager.connect(admin).createPayment(
@@ -75,8 +88,11 @@ describe("Meta-Transaction Pattern", function () {
           paymentId,
           buyerId,
           itemId,
+          paymentToken,
           amount,
-          expiration
+          expiration,
+          lineItems,
+          externalFees
         )
       )
         .to.emit(mockPaymentTreasury, "PaymentCreated")
@@ -135,11 +151,13 @@ describe("Meta-Transaction Pattern", function () {
         ethers.encodeBytes32String("payment2"),
         ethers.encodeBytes32String("payment3"),
       ];
+      const buyerAddresses = [admin.address, user.address, admin.address];
 
       await expect(
         adapterManager.connect(admin).confirmPaymentBatch(
           await mockPaymentTreasury.getAddress(),
-          paymentIds
+          paymentIds,
+          buyerAddresses
         )
       )
         .to.emit(mockPaymentTreasury, "PaymentBatchConfirmed")

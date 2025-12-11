@@ -28,8 +28,21 @@ describe("PaymentTreasuryAdapter Functions", function () {
       const paymentId = ethers.encodeBytes32String("payment1");
       const buyerId = ethers.encodeBytes32String("buyer1");
       const itemId = ethers.encodeBytes32String("item1");
+      const paymentToken = admin.address;
       const amount = ethers.parseEther("1");
       const expiration = Math.floor(Date.now() / 1000) + 3600;
+      const lineItems = [
+        {
+          typeId: ethers.encodeBytes32String("line1"),
+          amount: ethers.parseEther("0.5"),
+        },
+      ];
+      const externalFees = [
+        {
+          feeType: ethers.encodeBytes32String("fee1"),
+          feeAmount: ethers.parseEther("0.1"),
+        },
+      ];
 
       await expect(
         adapterManager.connect(admin).createPayment(
@@ -37,8 +50,11 @@ describe("PaymentTreasuryAdapter Functions", function () {
           paymentId,
           buyerId,
           itemId,
+          paymentToken,
           amount,
-          expiration
+          expiration,
+          lineItems,
+          externalFees
         )
       ).to.emit(mockTreasury, "PaymentCreated")
         .withArgs(paymentId, buyerId, admin.address);
@@ -48,6 +64,9 @@ describe("PaymentTreasuryAdapter Functions", function () {
       const paymentId = ethers.encodeBytes32String("payment1");
       const buyerId = ethers.encodeBytes32String("buyer1");
       const itemId = ethers.encodeBytes32String("item1");
+      const paymentToken = admin.address;
+      const lineItems: { typeId: string; amount: bigint }[] = [];
+      const externalFees: { feeType: string; feeAmount: bigint }[] = [];
 
       await expect(
         adapterManager.connect(user).createPayment(
@@ -55,8 +74,11 @@ describe("PaymentTreasuryAdapter Functions", function () {
           paymentId,
           buyerId,
           itemId,
+          paymentToken,
           100,
-          123456
+          123456,
+          lineItems,
+          externalFees
         )
       ).to.be.revertedWithCustomError(adapterManager, "NotAdmin");
     });
@@ -79,11 +101,13 @@ describe("PaymentTreasuryAdapter Functions", function () {
   describe("confirmPayment", function () {
     it("Should call confirmPayment on treasury", async function () {
       const paymentId = ethers.encodeBytes32String("payment1");
+      const buyerAddress = user.address;
 
       await expect(
         adapterManager.connect(admin).confirmPayment(
           await mockTreasury.getAddress(),
-          paymentId
+          paymentId,
+          buyerAddress
         )
       ).to.emit(mockTreasury, "PaymentConfirmed")
         .withArgs(paymentId, admin.address);
@@ -97,11 +121,13 @@ describe("PaymentTreasuryAdapter Functions", function () {
         ethers.encodeBytes32String("payment2"),
         ethers.encodeBytes32String("payment3"),
       ];
+      const buyerAddresses = [admin.address, user.address, admin.address];
 
       await expect(
         adapterManager.connect(admin).confirmPaymentBatch(
           await mockTreasury.getAddress(),
-          paymentIds
+          paymentIds,
+          buyerAddresses
         )
       ).to.emit(mockTreasury, "PaymentBatchConfirmed")
         .withArgs(paymentIds.length, admin.address);

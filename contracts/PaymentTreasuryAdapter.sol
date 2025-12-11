@@ -2,6 +2,7 @@
 pragma solidity ^0.8.22;
 
 import {BaseAdminAdapter} from "./base/BaseAdminAdapter.sol";
+import {IPaymentTreasury, IPaymentTreasuryClaimRefundWithAddress, IPaymentTreasuryClaimRefundSingle} from "./interfaces/IPaymentTreasury.sol";
 
 abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     function createPayment(
@@ -14,13 +15,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "createPayment(bytes32,bytes32,bytes32,uint256,uint256)",
-            paymentId,
-            buyerId,
-            itemId,
-            amount,
-            expiration
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.createPayment,
+            (paymentId, buyerId, itemId, amount, expiration)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -34,9 +31,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "cancelPayment(bytes32)",
-            paymentId
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.cancelPayment,
+            (paymentId)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -50,9 +47,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "confirmPayment(bytes32)",
-            paymentId
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.confirmPayment,
+            (paymentId)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -66,9 +63,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "confirmPaymentBatch(bytes32[])",
-            paymentIds
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.confirmPaymentBatch,
+            (paymentIds)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -83,10 +80,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "claimRefund(bytes32,address)",
-            paymentId,
-            refundAddress
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasuryClaimRefundWithAddress.claimRefund,
+            (paymentId, refundAddress)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -100,9 +96,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "claimRefund(bytes32)",
-            paymentId
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasuryClaimRefundSingle.claimRefund,
+            (paymentId)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -116,9 +112,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "cancelTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.cancelTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -132,9 +128,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "pauseTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.pauseTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -148,9 +144,9 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "unpauseTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.unpauseTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 

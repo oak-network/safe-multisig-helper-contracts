@@ -12,10 +12,9 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "setPaymentGatewayFee(bytes32,uint256)",
-            pledgeId,
-            fee
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.setPaymentGatewayFee,
+            (pledgeId, fee)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -26,7 +25,10 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     function approveWithdrawal(address treasury) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature("approveWithdrawal()");
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.approveWithdrawal,
+            ()
+        );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
         (bool success, ) = treasury.call(dataWithSender);
@@ -42,12 +44,9 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "configureTreasury((address,uint256),(uint256,uint256),(bytes32[]),(uint256[]))",
-            config,
-            campaignData,
-            feeKeys,
-            feeValues
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.configureTreasury,
+            (config, campaignData, feeKeys, feeValues)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -61,9 +60,9 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "updateDeadline(uint256)",
-            deadline
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.updateDeadline,
+            (deadline)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -77,9 +76,9 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "updateGoalAmount(uint256)",
-            goalAmount
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.updateGoalAmount,
+            (goalAmount)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -99,15 +98,17 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "setFeeAndPledge(bytes32,address,uint256,uint256,uint256,bytes32[],bool)",
-            pledgeId,
-            backer,
-            pledgeAmount,
-            tip,
-            fee,
-            reward,
-            isPledgeForAReward
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.setFeeAndPledge,
+            (
+                pledgeId,
+                backer,
+                pledgeAmount,
+                tip,
+                fee,
+                reward,
+                isPledgeForAReward
+            )
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -118,10 +119,7 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     function withdraw(address treasury, uint256 amount) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "withdraw(uint256)",
-            amount
-        );
+        bytes memory data = abi.encodeCall(IKeepWhatsRaised.withdraw, (amount));
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
         (bool success, ) = treasury.call(dataWithSender);
@@ -131,7 +129,7 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     function claimTip(address treasury) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature("claimTip()");
+        bytes memory data = abi.encodeCall(IKeepWhatsRaised.claimTip, ());
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
         (bool success, ) = treasury.call(dataWithSender);
@@ -141,7 +139,7 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     function claimFund(address treasury) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature("claimFund()");
+        bytes memory data = abi.encodeCall(IKeepWhatsRaised.claimFund, ());
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
         (bool success, ) = treasury.call(dataWithSender);
@@ -154,9 +152,9 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "cancelTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.cancelTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -170,9 +168,9 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "pauseTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.pauseTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
@@ -186,9 +184,9 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     ) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeWithSignature(
-            "unpauseTreasury(bytes32)",
-            message
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.unpauseTreasury,
+            (message)
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 

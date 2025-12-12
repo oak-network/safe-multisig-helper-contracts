@@ -182,7 +182,7 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
         if (!success) revert CallFailed();
     }
 
-    function withdraw(address treasury) external onlyAdmin {
+    function ptWithdraw(address treasury) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
         bytes memory data = abi.encodeCall(IPaymentTreasury.withdraw, ());

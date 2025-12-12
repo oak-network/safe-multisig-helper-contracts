@@ -2,11 +2,7 @@
 pragma solidity ^0.8.22;
 
 import {BaseAdminAdapter} from "./base/BaseAdminAdapter.sol";
-import {
-    IPaymentTreasury,
-    IPaymentTreasuryClaimRefundWithAddress,
-    IPaymentTreasuryClaimRefundSingle
-} from "./interfaces/IPaymentTreasury.sol";
+import {IPaymentTreasury, IPaymentTreasuryClaimRefundWithAddress, IPaymentTreasuryClaimRefundSingle} from "./interfaces/IPaymentTreasury.sol";
 import {ICampaignPaymentTreasury} from "./interfaces/ICampaignPaymentTreasury.sol";
 
 abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
@@ -34,6 +30,38 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
                 expiration,
                 lineItems,
                 externalFees
+            )
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
+    }
+
+    function createPaymentBatch(
+        address treasury,
+        bytes32[] calldata paymentIds,
+        bytes32[] calldata buyerIds,
+        bytes32[] calldata itemIds,
+        address[] calldata paymentTokens,
+        uint256[] calldata amounts,
+        uint256[] calldata expirations,
+        ICampaignPaymentTreasury.LineItem[][] calldata lineItemsArray,
+        ICampaignPaymentTreasury.ExternalFees[][] calldata externalFeesArray
+    ) external onlyAdmin {
+        if (treasury == address(0)) revert ZeroAddress();
+
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.createPaymentBatch,
+            (
+                paymentIds,
+                buyerIds,
+                itemIds,
+                paymentTokens,
+                amounts,
+                expirations,
+                lineItemsArray,
+                externalFeesArray
             )
         );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
@@ -119,6 +147,45 @@ abstract contract PaymentTreasuryAdapter is BaseAdminAdapter {
             IPaymentTreasuryClaimRefundSingle.claimRefund,
             (paymentId)
         );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
+    }
+
+    function claimNonGoalLineItems(
+        address treasury,
+        address token
+    ) external onlyAdmin {
+        if (treasury == address(0)) revert ZeroAddress();
+
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.claimNonGoalLineItems,
+            (token)
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
+    }
+
+    function claimExpiredFunds(address treasury) external onlyAdmin {
+        if (treasury == address(0)) revert ZeroAddress();
+
+        bytes memory data = abi.encodeCall(
+            IPaymentTreasury.claimExpiredFunds,
+            ()
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
+    }
+
+    function withdraw(address treasury) external onlyAdmin {
+        if (treasury == address(0)) revert ZeroAddress();
+
+        bytes memory data = abi.encodeCall(IPaymentTreasury.withdraw, ());
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
         (bool success, ) = treasury.call(dataWithSender);

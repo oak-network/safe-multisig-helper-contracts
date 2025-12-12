@@ -43,6 +43,7 @@ interface IKeepWhatsRaised {
     function setFeeAndPledge(
         bytes32 pledgeId,
         address backer,
+        address pledgeToken,
         uint256 pledgeAmount,
         uint256 tip,
         uint256 fee,
@@ -50,7 +51,9 @@ interface IKeepWhatsRaised {
         bool isPledgeForAReward
     ) external;
 
-    function withdraw(uint256 amount) external;
+    function withdraw() external;
+
+    function withdraw(address token, uint256 amount) external;
 
     function claimTip() external;
 
@@ -61,4 +64,13 @@ interface IKeepWhatsRaised {
     function pauseTreasury(bytes32 message) external;
 
     function unpauseTreasury(bytes32 message) external;
+}
+
+// Helper interfaces to disambiguate overloaded withdraw functions
+interface IKeepWhatsRaisedWithdrawNoParams {
+    function withdraw() external;
+}
+
+interface IKeepWhatsRaisedWithdrawParams {
+    function withdraw(address token, uint256 amount) external;
 }

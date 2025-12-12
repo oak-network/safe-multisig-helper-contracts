@@ -6,7 +6,6 @@ pragma solidity ^0.8.22;
  * @notice An interface for managing campaign payment treasury contracts.
  */
 interface ICampaignPaymentTreasury {
-
     /**
      * @notice Represents a stored line item with its configuration snapshot.
      * @param typeId The type identifier of the line item.
@@ -145,19 +144,14 @@ interface ICampaignPaymentTreasury {
      * @notice Cancels an existing payment with the given payment ID.
      * @param paymentId The unique identifier of the payment to cancel.
      */
-    function cancelPayment(
-        bytes32 paymentId
-    ) external;
+    function cancelPayment(bytes32 paymentId) external;
 
     /**
      * @notice Confirms and finalizes the payment associated with the given payment ID.
      * @param paymentId The unique identifier of the payment to confirm.
      * @param buyerAddress Optional buyer address to mint NFT to. Pass address(0) to skip NFT minting.
      */
-    function confirmPayment(
-        bytes32 paymentId,
-        address buyerAddress
-    ) external;
+    function confirmPayment(bytes32 paymentId, address buyerAddress) external;
 
     /**
      * @notice Confirms and finalizes multiple payments in a single transaction.
@@ -193,9 +187,7 @@ interface ICampaignPaymentTreasury {
      * Used for processCryptoPayment and confirmPayment (with buyer address) transactions.
      * @param paymentId The unique identifier of the refundable payment (must have an NFT).
      */
-    function claimRefund(
-        bytes32 paymentId
-    ) external;
+    function claimRefund(bytes32 paymentId) external;
 
     /**
      * @notice Allows platform admin to claim all remaining funds once the claim window has opened.
@@ -231,7 +223,9 @@ interface ICampaignPaymentTreasury {
      * @param paymentId The unique identifier of the payment.
      * @return A PaymentData struct containing all payment information.
      */
-    function getPaymentData(bytes32 paymentId) external view returns (PaymentData memory);
+    function getPaymentData(
+        bytes32 paymentId
+    ) external view returns (PaymentData memory);
 
     /**
      * @notice Retrieves the lifetime raised amount in the treasury (never decreases with refunds).
@@ -257,4 +251,22 @@ interface ICampaignPaymentTreasury {
      * @return True if the treasury is cancelled, false otherwise.
      */
     function cancelled() external view returns (bool);
+
+    /**
+     * @notice Pauses the treasury. Only callable by platform admin.
+     * @param message The reason for pausing the treasury.
+     */
+    function pauseTreasury(bytes32 message) external;
+
+    /**
+     * @notice Unpauses the treasury. Only callable by platform admin.
+     * @param message The reason for unpausing the treasury.
+     */
+    function unpauseTreasury(bytes32 message) external;
+
+    /**
+     * @notice Cancels the treasury. Only callable by platform admin.
+     * @param message The reason for cancelling the treasury.
+     */
+    function cancelTreasury(bytes32 message) external;
 }

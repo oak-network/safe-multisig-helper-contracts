@@ -52,4 +52,14 @@ abstract contract AllOrNothingAdapter is BaseAdminAdapter {
         (bool success, ) = treasury.call(dataWithSender);
         if (!success) revert CallFailed();
     }
+
+    function aonWithdraw(address treasury) external onlyAdmin {
+        if (treasury == address(0)) revert ZeroAddress();
+
+        bytes memory data = abi.encodeCall(IAllOrNothing.withdraw, ());
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
+    }
 }

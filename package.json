@@ -8,7 +8,9 @@
     "test:gas": "REPORT_GAS=true hardhat test",
     "compile": "hardhat compile",
     "deploy:alfajores": "hardhat ignition deploy ignition/modules/deploy.ts --network alfajores",
-    "deploy:celo": "hardhat ignition deploy ignition/modules/deploy.ts --network celo"
+    "deploy:celo": "hardhat ignition deploy ignition/modules/deploy.ts --network celo",
+    "deploy:sepolia": "hardhat ignition deploy ignition/modules/deploy.ts --network sepolia",
+    "deploy:ethereum": "hardhat ignition deploy ignition/modules/deploy.ts --network ethereum"
   },
   "keywords": [],
   "author": "",

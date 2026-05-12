@@ -2,7 +2,7 @@
 pragma solidity ^0.8.22;
 
 import {BaseAdminAdapter} from "./base/BaseAdminAdapter.sol";
-import {IKeepWhatsRaised} from "./interfaces/IKeepWhatsRaised.sol";
+import {IKeepWhatsRaised, IKeepWhatsRaisedWithdrawNoParams, IKeepWhatsRaisedWithdrawParams} from "./interfaces/IKeepWhatsRaised.sol";
 
 abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
     function setPaymentGatewayFee(
@@ -90,6 +90,7 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
         address treasury,
         bytes32 pledgeId,
         address backer,
+        address pledgeToken,
         uint256 pledgeAmount,
         uint256 tip,
         uint256 fee,
@@ -103,6 +104,7 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
             (
                 pledgeId,
                 backer,
+                pledgeToken,
                 pledgeAmount,
                 tip,
                 fee,
@@ -116,10 +118,30 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
         if (!success) revert CallFailed();
     }
 
-    function withdraw(address treasury, uint256 amount) external onlyAdmin {
+    function kwrWithdraw(address treasury) external onlyAdmin {
         if (treasury == address(0)) revert ZeroAddress();
 
-        bytes memory data = abi.encodeCall(IKeepWhatsRaised.withdraw, (amount));
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaisedWithdrawNoParams.withdraw,
+            ()
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
+    }
+
+    function kwrWithdraw(
+        address treasury,
+        address token,
+        uint256 amount
+    ) external onlyAdmin {
+        if (treasury == address(0)) revert ZeroAddress();
+
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaisedWithdrawParams.withdraw,
+            (token, amount)
+        );
         bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
 
         (bool success, ) = treasury.call(dataWithSender);

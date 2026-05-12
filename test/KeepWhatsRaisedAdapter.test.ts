@@ -59,12 +59,16 @@ describe("KeepWhatsRaisedAdapter Functions", function () {
     });
   });
 
-  describe("withdraw", function () {
+  describe("kwrWithdraw", function () {
     it("Should call withdraw on treasury", async function () {
       const amount = ethers.parseEther("1");
 
       await expect(
-        adapterManager.connect(admin).withdraw(await mockTreasury.getAddress(), amount)
+        adapterManager.connect(admin)["kwrWithdraw(address,address,uint256)"](
+          await mockTreasury.getAddress(),
+          admin.address,
+          amount
+        )
       ).to.emit(mockTreasury, "Withdrawn")
         .withArgs(amount, admin.address);
     });
@@ -129,5 +133,6 @@ describe("KeepWhatsRaisedAdapter Functions", function () {
         .withArgs(message, admin.address);
     });
   });
+
 });
 

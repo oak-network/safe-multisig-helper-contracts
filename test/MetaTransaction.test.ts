@@ -169,6 +169,7 @@ describe("Meta-Transaction Pattern", function () {
     it("Should handle struct parameters correctly", async function () {
       const pledgeId = ethers.encodeBytes32String("pledge1");
       const backer = user.address;
+      const pledgeToken = admin.address;
       const pledgeAmount = ethers.parseEther("1");
       const tip = ethers.parseEther("0.1");
       const fee = ethers.parseEther("0.05");
@@ -180,6 +181,7 @@ describe("Meta-Transaction Pattern", function () {
           await mockKeepWhatsRaisedTreasury.getAddress(),
           pledgeId,
           backer,
+          pledgeToken,
           pledgeAmount,
           tip,
           fee,
@@ -290,7 +292,11 @@ describe("Meta-Transaction Pattern", function () {
         .withArgs(admin.address);
 
       await expect(
-        adapterManager.connect(admin).withdraw(treasuryAddr, 1000)
+        adapterManager.connect(admin)["kwrWithdraw(address,address,uint256)"](
+          treasuryAddr,
+          admin.address,
+          1000
+        )
       )
         .to.emit(mockKeepWhatsRaisedTreasury, "Withdrawn")
         .withArgs(1000, admin.address);

@@ -72,6 +72,7 @@ contract MockKeepWhatsRaisedTreasury {
     function setFeeAndPledge(
         bytes32 pledgeId,
         address backer,
+        address,
         uint256,
         uint256,
         uint256,
@@ -81,7 +82,11 @@ contract MockKeepWhatsRaisedTreasury {
         emit FeeAndPledgeSet(pledgeId, backer, _msgSender());
     }
 
-    function withdraw(uint256 amount) external {
+    function withdraw() external {
+        emit Withdrawn(0, _msgSender());
+    }
+
+    function withdraw(address, uint256 amount) external {
         emit Withdrawn(amount, _msgSender());
     }
 

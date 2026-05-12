@@ -127,7 +127,7 @@ describe("AdapterManager", function () {
     it("Should have all KeepWhatsRaised functions", async function () {
       expect(adapterManager.setPaymentGatewayFee).to.exist;
       expect(adapterManager.approveWithdrawal).to.exist;
-      expect(adapterManager.withdraw).to.exist;
+      expect(adapterManager.kwrWithdraw).to.exist;
       expect(adapterManager.claimTip).to.exist;
       expect(adapterManager.claimFund).to.exist;
       expect(adapterManager.kwrPauseTreasury).to.exist;

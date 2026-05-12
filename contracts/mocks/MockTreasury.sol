@@ -29,6 +29,7 @@ contract MockKeepWhatsRaisedTreasury {
     event TreasuryCancelled(bytes32 message, address indexed sender);
     event TreasuryPaused(bytes32 message, address indexed sender);
     event TreasuryUnpaused(bytes32 message, address indexed sender);
+    event PledgeVoided(uint256 indexed tokenId, address indexed sender);
 
     /**
      * @dev Extract the original sender from calldata (last 20 bytes)
@@ -108,6 +109,10 @@ contract MockKeepWhatsRaisedTreasury {
 
     function unpauseTreasury(bytes32 message) external {
         emit TreasuryUnpaused(message, _msgSender());
+    }
+
+    function voidPledge(uint256 tokenId) external {
+        emit PledgeVoided(tokenId, _msgSender());
     }
 
     // Structs matching IKeepWhatsRaised

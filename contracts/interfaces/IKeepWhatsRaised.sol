@@ -64,6 +64,8 @@ interface IKeepWhatsRaised {
     function pauseTreasury(bytes32 message) external;
 
     function unpauseTreasury(bytes32 message) external;
+
+    function voidPledge(uint256 tokenId) external;
 }
 
 // Helper interfaces to disambiguate overloaded withdraw functions

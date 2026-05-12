@@ -215,4 +215,20 @@ abstract contract KeepWhatsRaisedAdapter is BaseAdminAdapter {
         (bool success, ) = treasury.call(dataWithSender);
         if (!success) revert CallFailed();
     }
+
+    function kwrVoidPledge(
+        address treasury,
+        uint256 tokenId
+    ) external onlyAdmin {
+        if (treasury == address(0)) revert ZeroAddress();
+
+        bytes memory data = abi.encodeCall(
+            IKeepWhatsRaised.voidPledge,
+            (tokenId)
+        );
+        bytes memory dataWithSender = abi.encodePacked(data, msg.sender);
+
+        (bool success, ) = treasury.call(dataWithSender);
+        if (!success) revert CallFailed();
+    }
 }

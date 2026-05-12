@@ -134,5 +134,48 @@ describe("KeepWhatsRaisedAdapter Functions", function () {
     });
   });
 
+  describe("kwrVoidPledge", function () {
+    it("Should call voidPledge on treasury", async function () {
+      const tokenId = 42;
+
+      await expect(
+        adapterManager.connect(admin).kwrVoidPledge(
+          await mockTreasury.getAddress(),
+          tokenId
+        )
+      ).to.emit(mockTreasury, "PledgeVoided")
+        .withArgs(tokenId, admin.address);
+    });
+
+    it("Should revert if non-admin calls", async function () {
+      await expect(
+        adapterManager.connect(user).kwrVoidPledge(
+          await mockTreasury.getAddress(),
+          1
+        )
+      ).to.be.revertedWithCustomError(adapterManager, "NotAdmin");
+    });
+
+    it("Should revert if treasury is zero address", async function () {
+      await expect(
+        adapterManager.connect(admin).kwrVoidPledge(
+          ethers.ZeroAddress,
+          1
+        )
+      ).to.be.revertedWithCustomError(adapterManager, "ZeroAddress");
+    });
+
+    it("Should forward correct tokenId via meta-transaction", async function () {
+      const tokenId = 999;
+
+      await expect(
+        adapterManager.connect(admin).kwrVoidPledge(
+          await mockTreasury.getAddress(),
+          tokenId
+        )
+      ).to.emit(mockTreasury, "PledgeVoided")
+        .withArgs(tokenId, admin.address);
+    });
+  });
 });
 

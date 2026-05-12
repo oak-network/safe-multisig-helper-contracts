@@ -133,6 +133,7 @@ describe("AdapterManager", function () {
       expect(adapterManager.kwrPauseTreasury).to.exist;
       expect(adapterManager.kwrUnpauseTreasury).to.exist;
       expect(adapterManager.kwrCancelTreasury).to.exist;
+      expect(adapterManager.kwrVoidPledge).to.exist;
     });
 
     it("Should have all AllOrNothing functions", async function () {

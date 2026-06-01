@@ -117,21 +117,31 @@ contract MockKeepWhatsRaisedTreasury {
 
     // Structs matching IKeepWhatsRaised
     struct Config {
-        address beneficiary;
-        uint256 minPledgeAmount;
+        uint256 minimumWithdrawalForFeeExemption;
+        uint256 withdrawalDelay;
+        uint256 refundDelay;
+        uint256 configLockPeriod;
+        bool isColombianCreator;
+        bool forwardTipsImmediately;
     }
 
     struct CampaignData {
+        uint256 launchTime;
         uint256 deadline;
         uint256 goalAmount;
+        bytes32 currency;
     }
 
     struct FeeKeys {
-        bytes32[] keys;
+        bytes32 flatFeeKey;
+        bytes32 cumulativeFlatFeeKey;
+        bytes32[] grossPercentageFeeKeys;
     }
 
     struct FeeValues {
-        uint256[] values;
+        uint256 flatFeeValue;
+        uint256 cumulativeFlatFeeValue;
+        uint256[] grossPercentageFeeValues;
     }
 }
 

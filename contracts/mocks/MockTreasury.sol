@@ -29,6 +29,7 @@ contract MockKeepWhatsRaisedTreasury {
     event TreasuryCancelled(bytes32 message, address indexed sender);
     event TreasuryPaused(bytes32 message, address indexed sender);
     event TreasuryUnpaused(bytes32 message, address indexed sender);
+    event PledgeVoided(uint256 indexed tokenId, address indexed sender);
 
     /**
      * @dev Extract the original sender from calldata (last 20 bytes)
@@ -72,6 +73,7 @@ contract MockKeepWhatsRaisedTreasury {
     function setFeeAndPledge(
         bytes32 pledgeId,
         address backer,
+        address,
         uint256,
         uint256,
         uint256,
@@ -81,7 +83,11 @@ contract MockKeepWhatsRaisedTreasury {
         emit FeeAndPledgeSet(pledgeId, backer, _msgSender());
     }
 
-    function withdraw(uint256 amount) external {
+    function withdraw() external {
+        emit Withdrawn(0, _msgSender());
+    }
+
+    function withdraw(address, uint256 amount) external {
         emit Withdrawn(amount, _msgSender());
     }
 
@@ -105,23 +111,37 @@ contract MockKeepWhatsRaisedTreasury {
         emit TreasuryUnpaused(message, _msgSender());
     }
 
+    function voidPledge(uint256 tokenId) external {
+        emit PledgeVoided(tokenId, _msgSender());
+    }
+
     // Structs matching IKeepWhatsRaised
     struct Config {
-        address beneficiary;
-        uint256 minPledgeAmount;
+        uint256 minimumWithdrawalForFeeExemption;
+        uint256 withdrawalDelay;
+        uint256 refundDelay;
+        uint256 configLockPeriod;
+        bool isColombianCreator;
+        bool forwardTipsImmediately;
     }
 
     struct CampaignData {
+        uint256 launchTime;
         uint256 deadline;
         uint256 goalAmount;
+        bytes32 currency;
     }
 
     struct FeeKeys {
-        bytes32[] keys;
+        bytes32 flatFeeKey;
+        bytes32 cumulativeFlatFeeKey;
+        bytes32[] grossPercentageFeeKeys;
     }
 
     struct FeeValues {
-        uint256[] values;
+        uint256 flatFeeValue;
+        uint256 cumulativeFlatFeeValue;
+        uint256[] grossPercentageFeeValues;
     }
 }
 

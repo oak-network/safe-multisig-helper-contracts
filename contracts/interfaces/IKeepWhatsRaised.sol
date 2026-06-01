@@ -18,11 +18,13 @@ interface IKeepWhatsRaised {
         uint256 refundDelay;
         uint256 configLockPeriod;
         bool isColombianCreator;
+        bool forwardTipsImmediately;
     }
     struct CampaignData {
         uint256 launchTime;
         uint256 deadline;
         uint256 goalAmount;
+        bytes32 currency;
     }
 
     function setPaymentGatewayFee(bytes32 pledgeId, uint256 fee) external;
@@ -64,6 +66,8 @@ interface IKeepWhatsRaised {
     function pauseTreasury(bytes32 message) external;
 
     function unpauseTreasury(bytes32 message) external;
+
+    function voidPledge(uint256 tokenId) external;
 }
 
 // Helper interfaces to disambiguate overloaded withdraw functions

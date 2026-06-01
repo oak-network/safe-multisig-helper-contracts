@@ -59,12 +59,16 @@ describe("KeepWhatsRaisedAdapter Functions", function () {
     });
   });
 
-  describe("withdraw", function () {
+  describe("kwrWithdraw", function () {
     it("Should call withdraw on treasury", async function () {
       const amount = ethers.parseEther("1");
 
       await expect(
-        adapterManager.connect(admin).withdraw(await mockTreasury.getAddress(), amount)
+        adapterManager.connect(admin)["kwrWithdraw(address,address,uint256)"](
+          await mockTreasury.getAddress(),
+          admin.address,
+          amount
+        )
       ).to.emit(mockTreasury, "Withdrawn")
         .withArgs(amount, admin.address);
     });
@@ -127,6 +131,50 @@ describe("KeepWhatsRaisedAdapter Functions", function () {
         )
       ).to.emit(mockTreasury, "TreasuryUnpaused")
         .withArgs(message, admin.address);
+    });
+  });
+
+  describe("kwrVoidPledge", function () {
+    it("Should call voidPledge on treasury", async function () {
+      const tokenId = 42;
+
+      await expect(
+        adapterManager.connect(admin).kwrVoidPledge(
+          await mockTreasury.getAddress(),
+          tokenId
+        )
+      ).to.emit(mockTreasury, "PledgeVoided")
+        .withArgs(tokenId, admin.address);
+    });
+
+    it("Should revert if non-admin calls", async function () {
+      await expect(
+        adapterManager.connect(user).kwrVoidPledge(
+          await mockTreasury.getAddress(),
+          1
+        )
+      ).to.be.revertedWithCustomError(adapterManager, "NotAdmin");
+    });
+
+    it("Should revert if treasury is zero address", async function () {
+      await expect(
+        adapterManager.connect(admin).kwrVoidPledge(
+          ethers.ZeroAddress,
+          1
+        )
+      ).to.be.revertedWithCustomError(adapterManager, "ZeroAddress");
+    });
+
+    it("Should forward correct tokenId via meta-transaction", async function () {
+      const tokenId = 999;
+
+      await expect(
+        adapterManager.connect(admin).kwrVoidPledge(
+          await mockTreasury.getAddress(),
+          tokenId
+        )
+      ).to.emit(mockTreasury, "PledgeVoided")
+        .withArgs(tokenId, admin.address);
     });
   });
 });

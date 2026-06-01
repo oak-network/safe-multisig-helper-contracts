@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
+struct PermitData {
+    uint256 nonce;
+    uint256 deadline;
+    bytes signature;
+}
+
 /**
  * @title ICampaignPaymentTreasury
  * @notice An interface for managing campaign payment treasury contracts.
@@ -137,7 +143,8 @@ interface ICampaignPaymentTreasury {
         address paymentToken,
         uint256 amount,
         LineItem[] calldata lineItems,
-        ExternalFees[] calldata externalFees
+        ExternalFees[] calldata externalFees,
+        PermitData calldata permitData
     ) external;
 
     /**
